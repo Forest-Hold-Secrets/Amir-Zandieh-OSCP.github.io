@@ -1,0 +1,104 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+/* Hacker Font */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&display=swap');
+
+* {
+  font-family: 'Fira Code', monospace !important;
+}
+
+/* Matrix Rain Background */
+body {
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 255, 0, 0.03) 0px,
+      transparent 1px,
+      transparent 2px,
+      rgba(0, 255, 0, 0.03) 3px
+    );
+}
+
+/* Glowing Links */
+a {
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+a:hover {
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+}
+
+/* Terminal Style Code Blocks */
+pre {
+  background: #0a0a0a !important;
+  border: 1px solid #00ff00;
+  border-radius: 5px;
+  padding: 20px !important;
+  position: relative;
+  margin: 20px 0;
+}
+
+pre::before {
+  content: "$ ";
+  color: #00ff00;
+  position: absolute;
+  left: 20px;
+  top: 20px;
+}
+
+/* Typing Animation */
+h1 {
+  overflow: hidden;
+  border-right: .15em solid #00ff00;
+  white-space: nowrap;
+  animation: typing 2s steps(30, end), blink-caret .75s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #00ff00 }
+}
+
+/* Table Styling */
+table {
+  border: 1px solid #00ff00;
+  background: rgba(0, 255, 0, 0.05);
+}
+
+th {
+  background: #00ff00;
+  color: #000;
+  font-weight: bold;
+  padding: 10px;
+}
+
+td {
+  padding: 10px;
+  border: 1px solid #00ff00;
+}
+
+/* Badge Styling */
+img[src*="shields.io"] {
+  margin: 5px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  pre {
+    font-size: 12px;
+    padding: 10px !important;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+}
