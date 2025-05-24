@@ -1,0 +1,32 @@
+# Site Configuration
+title: "Your Hacker Handle"
+description: "Penetration Tester | Security Researcher | Tool Developer"
+author: "Your Name"
+email: your-email@example.com
+url: "https://Amir-Zandieh-OSCP.github.io"
+baseurl: ""
+
+# Theme
+remote_theme: pages-themes/hacker@v0.2.0
+
+# Plugins
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jemoji
+
+# Social
+github_username: Forest-Hold-Secrets
+linkedin_username: Amir Zandieh
+twitter_username: NUll(HAHA)
+
+# Collections
+collections:
+  writeups:
+    output: true
+    permalink: /writeups/:name
+  tools:
+    output: true
+    permalink: /tools/:name
