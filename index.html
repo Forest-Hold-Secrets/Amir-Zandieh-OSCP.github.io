@@ -1,71 +1,650 @@
----
-layout: default
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forest-Hold-Secrets | Security Researcher</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<pre style="color: #00ff00; text-align: center; font-size: 10px; line-height: 1;">
- ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄ 
-▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌
-▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀▀▀ ▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌
-▐░▌          ▐░▌          ▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌          ▐░▌       ▐░▌
-▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄▄▄ ▐░▌          ▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄█░▌
-▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌
- ▀▀▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░▌          ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀█░█▀▀ ▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀█░█▀▀ 
-          ▐░▌▐░▌          ▐░▌          ▐░▌       ▐░▌▐░▌     ▐░▌  ▐░▌          ▐░▌     ▐░▌  
- ▄▄▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄▄▄ ▐░▌       ▐░▌▐░▌      ▐░▌ ▐░█▄▄▄▄▄▄▄▄▄ ▐░▌      ▐░▌ 
-▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌
- ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀ 
-                              PENETRATION TESTER | EXPLOIT DEVELOPER
-</pre>
+        body {
+            background: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Fira Code', monospace;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-<div align="center">
-  <img src="https://img.shields.io/badge/Platform-HackTheBox-9FEF00?style=flat-square&logo=hack-the-box" />
-  <img src="https://img.shields.io/badge/Focus-Web%20Security-FF6B6B?style=flat-square" />
-  <img src="https://img.shields.io/badge/Cert-OSCP%20(In%20Progress)-FFA500?style=flat-square" />
-  <img src="https://img.shields.io/badge/Tools-10+-00D9FF?style=flat-square" />
-</div>
+        /* Matrix rain effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 255, 0, 0.03) 0px,
+                    transparent 1px,
+                    transparent 2px,
+                    rgba(0, 255, 0, 0.03) 3px
+                );
+            pointer-events: none;
+            z-index: 1;
+        }
 
----
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
 
-## # whoami
+        /* ASCII Art Header */
+        .ascii-header {
+            text-align: center;
+            font-size: 8px;
+            line-height: 1;
+            color: #00ff00;
+            margin: 40px 0;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00ff00;
+        }
 
-> Security researcher passionate about breaking things to make them more secure. Currently focusing on web application security, Active Directory exploitation, and developing automation tools for the pentesting community.
+        /* Typing animation */
+        .typing {
+            overflow: hidden;
+            border-right: .15em solid #00ff00;
+            white-space: nowrap;
+            margin: 0 auto;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
 
----
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
 
-## 📊 Current Stats
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #00ff00 }
+        }
 
-| Platform | Achievement | Status |
-|----------|------------|---------|
-| **OffSec PG** | 30+ Machines | Practice Mode |
-| **CVEs** | 0 (working on it!) | Research Phase |
-| **Tools Released** | 10+ | Active Development |
+        /* Badges */
+        .badges {
+            text-align: center;
+            margin: 30px 0;
+        }
 
----
+        .badges img {
+            margin: 0 5px;
+            transition: transform 0.3s;
+        }
 
-## 🔥 Latest Writeups
+        .badges img:hover {
+            transform: translateY(-5px);
+        }
 
-{% for post in site.writeups limit:3 %}
-### → [{{ post.title }}]({{ post.url }})
-*{{ post.date | date: "%B %d, %Y" }}* - {{ post.description }}
-{% endfor %}
+        /* Sections */
+        .section {
+            margin: 60px 0;
+            padding: 30px;
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
 
-[View All Writeups →](/writeups)
+        .section::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff00, transparent, #00ff00);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
 
----
+        .section:hover::before {
+            opacity: 0.3;
+        }
 
-## 🛠️ Security Tools
+        h1, h2, h3 {
+            color: #00ff00;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #00ff00;
+        }
 
-### [RevShellManager](https://github.com/yourusername/revshellmanager)
-Advanced reverse shell handler with session management and automated persistence
+        h1 {
+            font-size: 2.5em;
+            text-align: center;
+        }
 
-### [WebPwn Suite](https://github.com/yourusername/webpwn)
-Automated web vulnerability scanner with custom payloads
+        h2 {
+            font-size: 1.8em;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
 
-### [ADEnum Plus](https://github.com/yourusername/adenumplus)
-Enhanced Active Directory enumeration and exploitation toolkit
+        /* Terminal prompt */
+        h2::before {
+            content: "$ ";
+            color: #00ff00;
+            font-weight: bold;
+        }
 
-[Explore All Tools →](/tools)
+        /* Links */
+        a {
+            color: #00ff00;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s;
+        }
 
----
+        a:hover {
+            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+        }
 
-## 🎯 Skill Matrix
+        a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #00ff00;
+            transition: width 0.3s;
+        }
+
+        a:hover::after {
+            width: 100%;
+        }
+
+        /* Stats table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #00ff00;
+        }
+
+        th {
+            background: #00ff00;
+            color: #000;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        /* Skill bars */
+        .skill-container {
+            margin: 30px 0;
+        }
+
+        .skill {
+            margin: 15px 0;
+        }
+
+        .skill-name {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .skill-bar {
+            height: 25px;
+            background: #1a1a1a;
+            border: 1px solid #00ff00;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #00cc00);
+            position: relative;
+            animation: fillBar 2s ease-out forwards;
+        }
+
+        @keyframes fillBar {
+            from { width: 0; }
+        }
+
+        /* Writeup cards */
+        .writeup-card {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid #00ff00;
+            padding: 20px;
+            margin: 20px 0;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .writeup-card:hover {
+            transform: translateX(10px);
+            box-shadow: -5px 5px 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .writeup-date {
+            color: #00cc00;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        /* Tool cards */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .tool-card {
+            background: #0f0f0f;
+            border: 1px solid #00ff00;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .tool-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+        }
+
+        .tool-card h3 {
+            margin-bottom: 10px;
+        }
+
+        /* Social links */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .social-link {
+            padding: 10px 20px;
+            border: 2px solid #00ff00;
+            background: transparent;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .social-link:hover {
+            background: #00ff00;
+            color: #000;
+            transform: scale(1.1);
+        }
+
+        /* Code blocks */
+        pre {
+            background: #000;
+            border: 1px solid #00ff00;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        pre::before {
+            content: "$ ";
+            color: #00ff00;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        code {
+            color: #00ff00;
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ascii-header {
+                font-size: 5px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.4em;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Glitch effect */
+        .glitch {
+            position: relative;
+            text-shadow: 
+                0.05em 0 0 rgba(255, 0, 0, 0.75),
+                -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
+                0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+            animation: glitch 1s infinite;
+        }
+
+        @keyframes glitch {
+            0% {
+                text-shadow: 
+                    0.05em 0 0 rgba(255, 0, 0, 0.75),
+                    -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
+                    0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            15% {
+                text-shadow: 
+                    0.05em 0 0 rgba(255, 0, 0, 0.75),
+                    -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
+                    0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            16% {
+                text-shadow: 
+                    -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+                    0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+                    -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            49% {
+                text-shadow: 
+                    -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+                    0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+                    -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            50% {
+                text-shadow: 
+                    0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+                    0.05em 0 0 rgba(0, 255, 0, 0.75),
+                    0 -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            99% {
+                text-shadow: 
+                    0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+                    0.05em 0 0 rgba(0, 255, 0, 0.75),
+                    0 -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            100% {
+                text-shadow: 
+                    -0.025em 0 0 rgba(255, 0, 0, 0.75),
+                    -0.025em -0.025em 0 rgba(0, 255, 0, 0.75),
+                    -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <pre class="ascii-header">
+███████╗ ██████╗ ██████╗ ███████╗███████╗████████╗    ██╗  ██╗ ██████╗ ██╗     ██████╗ 
+██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔════╝╚══██╔══╝    ██║  ██║██╔═══██╗██║     ██╔══██╗
+█████╗  ██║   ██║██████╔╝█████╗  ███████╗   ██║       ███████║██║   ██║██║     ██║  ██║
+██╔══╝  ██║   ██║██╔══██╗██╔══╝  ╚════██║   ██║       ██╔══██║██║   ██║██║     ██║  ██║
+██║     ╚██████╔╝██║  ██║███████╗███████║   ██║       ██║  ██║╚██████╔╝███████╗██████╔╝
+╚═╝      ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝   ╚═╝       ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═════╝ 
+                    ███████╗███████╗ ██████╗██████╗ ███████╗████████╗███████╗
+                    ██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝╚══██╔══╝██╔════╝
+                    ███████╗█████╗  ██║     ██████╔╝█████╗     ██║   ███████╗
+                    ╚════██║██╔══╝  ██║     ██╔══██╗██╔══╝     ██║   ╚════██║
+                    ███████║███████╗╚██████╗██║  ██║███████╗   ██║   ███████║
+                    ╚══════╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝
+        </pre>
+
+        <h1 class="typing">PENETRATION TESTER | SECURITY RESEARCHER | EXPLOIT DEVELOPER</h1>
+
+        <div class="badges">
+            <img src="https://img.shields.io/badge/Platform-HackTheBox-9FEF00?style=for-the-badge&logo=hack-the-box" alt="HackTheBox">
+            <img src="https://img.shields.io/badge/Focus-Web%20Security-FF6B6B?style=for-the-badge" alt="Web Security">
+            <img src="https://img.shields.io/badge/Cert-OSCP%20(In%20Progress)-FFA500?style=for-the-badge" alt="OSCP">
+            <img src="https://img.shields.io/badge/Tools-10+-00D9FF?style=for-the-badge" alt="Tools">
+            <img src="https://img.shields.io/badge/CVEs-Loading...-FF0000?style=for-the-badge" alt="CVEs">
+        </div>
+
+        <section class="section">
+            <h2>whoami</h2>
+            <p>Security researcher with a passion for breaking things (legally) and building tools that help others do the same. 
+            Currently grinding through HackTheBox Pro Labs and OffSec Proving Grounds while developing automation frameworks for the pentesting community.</p>
+            
+            <p>Specializing in:</p>
+            <ul style="margin-left: 40px; color: #00cc00;">
+                <li>Web Application Security (SQLi, XSS, SSRF, XXE)</li>
+                <li>Active Directory Exploitation</li>
+                <li>Linux Privilege Escalation</li>
+                <li>Custom Exploit Development</li>
+                <li>Security Tool Development (Python, Go, Bash)</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>current_stats</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Platform</th>
+                        <th>Achievement</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>HackTheBox</td>
+                        <td>50+ Boxes Owned</td>
+                        <td style="color: #9FEF00;">Pro Hacker</td>
+                    </tr>
+                    <tr>
+                        <td>OffSec PG</td>
+                        <td>30+ Machines</td>
+                        <td style="color: #FFA500;">Practice Mode</td>
+                    </tr>
+                    <tr>
+                        <td>TryHackMe</td>
+                        <td>100+ Rooms</td>
+                        <td style="color: #00D9FF;">0xC Rank</td>
+                    </tr>
+                    <tr>
+                        <td>CVEs</td>
+                        <td>0 (working on it!)</td>
+                        <td style="color: #FF6B6B;">Research Phase</td>
+                    </tr>
+                    <tr>
+                        <td>Tools Released</td>
+                        <td>10+</td>
+                        <td style="color: #9FEF00;">Active Development</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>skill_matrix</h2>
+            <div class="skill-container">
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>Web Application Security</span>
+                        <span>95%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 95%;"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>Network Penetration Testing</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 85%;"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>Active Directory</span>
+                        <span>75%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 75%;"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>Exploit Development</span>
+                        <span>65%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 65%;"></div>
+                    </div>
+                </div>
+                <div class="skill">
+                    <div class="skill-name">
+                        <span>Cloud Security</span>
+                        <span>50%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 50%;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>latest_writeups</h2>
+            <div class="writeup-card">
+                <h3><a href="writeups/htb-keeper.html">HackTheBox: Keeper</a></h3>
+                <p class="writeup-date">January 15, 2024</p>
+                <p>Easy Linux box focusing on KeePass exploitation and CVE-2023-32784. Learned about memory dump analysis and credential extraction techniques.</p>
+            </div>
+            <div class="writeup-card">
+                <h3><a href="writeups/htb-authority.html">HackTheBox: Authority</a></h3>
+                <p class="writeup-date">January 10, 2024</p>
+                <p>Medium Windows box with Active Directory. Exploited Ansible vault misconfigurations and performed certificate-based authentication attacks.</p>
+            </div>
+            <div class="writeup-card">
+                <h3><a href="writeups/pg-heist.html">OffSec PG: Heist</a></h3>
+                <p class="writeup-date">January 5, 2024</p>
+                <p>Challenging box involving web application vulnerabilities, custom exploit development, and advanced privilege escalation techniques.</p>
+            </div>
+            <p style="text-align: center; margin-top: 30px;">
+                <a href="writeups.html" style="font-size: 1.2em;">→ View All Writeups</a>
+            </p>
+        </section>
+
+        <section class="section">
+            <h2>security_tools</h2>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h3 class="glitch">🔥 AutoPwn Framework</h3>
+                    <p>Modular exploitation framework for automating common attack chains. Features intelligent vulnerability chaining and session management.</p>
+                    <p><a href="https://github.com/forest-hold-secrets/autopwn">View on GitHub →</a></p>
+                </div>
+                <div class="tool-card">
+                    <h3 class="glitch">🌐 WebRecon Plus</h3>
+                    <p>Enhanced web reconnaissance tool with subdomain enumeration, technology detection, and custom wordlist generation.</p>
+                    <p><a href="https://github.com/forest-hold-secrets/webrecon-plus">View on GitHub →</a></p>
+                </div>
+                <div class="tool-card">
+                    <h3 class="glitch">📡 RevShell Manager</h3>
+                    <p>Advanced reverse shell handler supporting multiple protocols, automatic persistence, and encrypted communications.</p>
+                    <p><a href="https://github.com/forest-hold-secrets/revshell-manager">View on GitHub →</a></p>
+                </div>
+                <div class="tool-card">
+                    <h3 class="glitch">🔐 ADPwn Toolkit</h3>
+                    <p>Comprehensive Active Directory exploitation toolkit with automated attack paths and BloodHound integration.</p>
+                    <p><a href="https://github.com/forest-hold-secrets/adpwn">View on GitHub →</a></p>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 30px;">
+                <a href="tools.html" style="font-size: 1.2em;">→ Explore All Tools</a>
+            </p>
+        </section>
+
+        <section class="section">
+            <h2>current_research</h2>
+            <div style="margin: 20px 0;">
+                <h3>🔍 Bypassing Modern WAFs</h3>
+                <p>Researching novel encoding techniques and HTTP smuggling methods to bypass next-gen Web Application Firewalls.</p>
+                
+                <h3 style="margin-top: 20px;">🛡️ Container Escape Techniques</h3>
+                <p>Exploring kernel vulnerabilities and misconfigurations that lead to Docker/Kubernetes container escapes.</p>
+                
+                <h3 style="margin-top: 20px;">⚡ Zero-Day Research</h3>
+                <p>Currently fuzzing popular web frameworks for memory corruption vulnerabilities. CVE submissions pending...</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>contact_me</h2>
+            <div class="social-links">
+                <a href="https://github.com/forest-hold-secrets" class="social-link">GitHub</a>
+                <a href="https://linkedin.com/in/your-profile" class="social-link">LinkedIn</a>
+                <a href="https://twitter.com/your-handle" class="social-link">Twitter</a>
+                <a href="mailto:your-email@example.com" class="social-link">Email</a>
+                <a href="writeups.xml" class="social-link">RSS Feed</a>
+            </div>
+        </section>
+
+        <div style="text-align: center; margin: 60px 0; color: #00cc00;">
+            <p>© 2024 Forest-Hold-Secrets | <span class="glitch">Stay Curious, Stay Dangerous</span></p>
+            <pre style="display: inline-block; margin-top: 20px; font-size: 10px;">
+   _  _   ___  _  _   
+  | || | / _ \| || |  
+  | || || | | | || |  
+  |__   | |_| |__   | 
+     |_| \___/   |_|  
+  Page Not Found ;)
+            </pre>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Typing effect for headers
+            const headers = document.querySelectorAll('h2');
+            headers.forEach(header => {
+                header.style.opacity = '0';
+                setTimeout(() => {
+                    header.style.opacity = '1';
+                    header.classList.add('typing');
+                }, 100);
+            });
+
+            // Random glitch effect
+            setInterval(() => {
+                const glitchElements = document.querySelectorAll('.glitch');
+                glitchElements.forEach(el => {
+                    if (Math.random() > 0.9) {
+                        el.style.animation = 'glitch 0.3s';
+                        setTimeout(() => {
+                            el.style.animation = '';
+                        }, 300);
+                    }
+                });
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
