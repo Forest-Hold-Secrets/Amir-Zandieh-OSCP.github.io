@@ -22,3 +22,8 @@ nmap -sC -sV -oN nmap/initial 10.10.11.227
 PORT   STATE SERVICE VERSION
 22/tcp open  ssh     OpenSSH 8.9p1 Ubuntu
 80/tcp open  http    nginx 1.18.0
+
+Initial Access
+[Your writeup content here...]
+Privilege Escalation
+[Your content here...]
