@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forest-Hold-Secrets | Security Researcher</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>Proving Grounds Chronicles | OffSec Security Research</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,15 +12,29 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #ff6b35;
+            --secondary: #1e3a8a;
+            --accent: #fbbf24;
+            --bg-dark: #0f0f0f;
+            --bg-card: #1a1a1a;
+            --text-primary: #e5e5e5;
+            --text-secondary: #a3a3a3;
+            --border: #333;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
         body {
-            background: #0a0a0a;
-            color: #00ff00;
-            font-family: 'Fira Code', monospace;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* Matrix rain effect */
+        /* Animated background */
         body::before {
             content: '';
             position: fixed;
@@ -28,623 +42,770 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
-                repeating-linear-gradient(
-                    0deg,
-                    rgba(0, 255, 0, 0.03) 0px,
-                    transparent 1px,
-                    transparent 2px,
-                    rgba(0, 255, 0, 0.03) 3px
-                );
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(30, 58, 138, 0.1) 0%, transparent 50%);
             pointer-events: none;
-            z-index: 1;
+            z-index: 0;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
             position: relative;
-            z-index: 2;
+            z-index: 1;
         }
 
-        /* ASCII Art Header */
-        .ascii-header {
-            text-align: center;
-            font-size: 8px;
-            line-height: 1;
-            color: #00ff00;
-            margin: 40px 0;
-            font-weight: bold;
-            text-shadow: 0 0 10px #00ff00;
+        /* Navigation */
+        nav {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            margin-bottom: 40px;
         }
 
-        /* Typing animation */
-        .typing {
-            overflow: hidden;
-            border-right: .15em solid #00ff00;
-            white-space: nowrap;
+        .nav-content {
+            max-width: 1400px;
             margin: 0 auto;
-            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: #00ff00 }
+        .logo::before {
+            content: '🔓';
+            font-size: 1.2em;
         }
 
-        /* Badges */
-        .badges {
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
             text-align: center;
-            margin: 30px 0;
+            padding: 80px 0;
+            position: relative;
         }
 
-        .badges img {
-            margin: 0 5px;
-            transition: transform 0.3s;
+        .hero h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 3s ease-in-out infinite;
         }
 
-        .badges img:hover {
-            transform: translateY(-5px);
+        @keyframes glow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
         }
 
-        /* Sections */
-        .section {
+        .hero p {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
             margin: 60px 0;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
             padding: 30px;
-            background: rgba(0, 255, 0, 0.05);
-            border: 1px solid #00ff00;
-            border-radius: 5px;
+            text-align: center;
+            transition: all 0.3s;
             position: relative;
             overflow: hidden;
         }
 
-        .section::before {
+        .stat-card::before {
             content: '';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #00ff00, transparent, #00ff00);
-            z-index: -1;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255, 107, 53, 0.1));
             opacity: 0;
             transition: opacity 0.3s;
         }
 
-        .section:hover::before {
-            opacity: 0.3;
+        .stat-card:hover::before {
+            opacity: 1;
         }
 
-        h1, h2, h3 {
-            color: #00ff00;
-            margin-bottom: 20px;
-            text-shadow: 0 0 5px #00ff00;
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
         }
 
-        h1 {
-            font-size: 2.5em;
-            text-align: center;
+        .stat-number {
+            font-size: 3em;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        h2 {
-            font-size: 1.8em;
-            border-bottom: 2px solid #00ff00;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+            margin-top: 10px;
         }
 
-        /* Terminal prompt */
-        h2::before {
-            content: "$ ";
-            color: #00ff00;
-            font-weight: bold;
+        /* Search and Filter */
+        .search-filter {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 30px;
+            margin: 40px 0;
         }
 
-        /* Links */
-        a {
-            color: #00ff00;
-            text-decoration: none;
-            position: relative;
-            transition: all 0.3s;
-        }
-
-        a:hover {
-            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
-        }
-
-        a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: #00ff00;
-            transition: width 0.3s;
-        }
-
-        a:hover::after {
-            width: 100%;
-        }
-
-        /* Stats table */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border: 1px solid #00ff00;
-        }
-
-        th {
-            background: #00ff00;
-            color: #000;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        tr:hover {
-            background: rgba(0, 255, 0, 0.1);
-        }
-
-        /* Skill bars */
-        .skill-container {
-            margin: 30px 0;
-        }
-
-        .skill {
-            margin: 15px 0;
-        }
-
-        .skill-name {
+        .search-bar {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
-        .skill-bar {
-            height: 25px;
-            background: #1a1a1a;
-            border: 1px solid #00ff00;
-            position: relative;
-            overflow: hidden;
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-size: 1em;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        .skill-progress {
-            height: 100%;
-            background: linear-gradient(90deg, #00ff00, #00cc00);
-            position: relative;
-            animation: fillBar 2s ease-out forwards;
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
         }
 
-        @keyframes fillBar {
-            from { width: 0; }
-        }
-
-        /* Writeup cards */
-        .writeup-card {
-            background: rgba(0, 255, 0, 0.05);
-            border: 1px solid #00ff00;
-            padding: 20px;
-            margin: 20px 0;
+        .search-btn {
+            padding: 15px 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s;
-            position: relative;
+        }
+
+        .search-btn:hover {
+            background: #ff5722;
+            transform: scale(1.05);
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tag {
+            padding: 8px 16px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-tag:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .filter-tag.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Writeups Grid */
+        .writeups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .writeup-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
         }
 
         .writeup-card:hover {
-            transform: translateX(10px);
-            box-shadow: -5px 5px 20px rgba(0, 255, 0, 0.3);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.2);
+            border-color: var(--primary);
         }
 
-        .writeup-date {
-            color: #00cc00;
+        .writeup-header {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(30, 58, 138, 0.1));
+            border-bottom: 1px solid var(--border);
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .difficulty.easy {
+            background: var(--success);
+            color: white;
+        }
+
+        .difficulty.medium {
+            background: var(--warning);
+            color: white;
+        }
+
+        .difficulty.hard {
+            background: var(--danger);
+            color: white;
+        }
+
+        .writeup-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin: 10px 0;
+            color: var(--text-primary);
+        }
+
+        .writeup-meta {
+            display: flex;
+            gap: 20px;
             font-size: 0.9em;
-            font-style: italic;
+            color: var(--text-secondary);
         }
 
-        /* Tool cards */
+        .writeup-content {
+            padding: 20px;
+            flex: 1;
+        }
+
+        .writeup-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .tag {
+            padding: 4px 10px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            font-size: 0.8em;
+            color: var(--text-secondary);
+        }
+
+        .read-more {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .read-more:hover {
+            background: #ff5722;
+            transform: scale(1.05);
+        }
+
+        /* Tools Section */
+        .tools-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 40px;
+            margin: 60px 0;
+        }
+
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
-            margin: 30px 0;
+            margin-top: 30px;
         }
 
         .tool-card {
-            background: #0f0f0f;
-            border: 1px solid #00ff00;
-            padding: 20px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 25px;
             transition: all 0.3s;
         }
 
         .tool-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+            border-color: var(--primary);
+            transform: scale(1.02);
         }
 
-        .tool-card h3 {
+        .tool-icon {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .tool-name {
+            font-size: 1.2em;
+            font-weight: 600;
             margin-bottom: 10px;
+            color: var(--primary);
         }
 
-        /* Social links */
+        /* Footer */
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 40px 0;
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
         .social-links {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin: 40px 0;
+            margin: 20px 0;
         }
 
         .social-link {
+            display: inline-block;
             padding: 10px 20px;
-            border: 2px solid #00ff00;
-            background: transparent;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            color: var(--text-primary);
+            text-decoration: none;
             transition: all 0.3s;
-            text-transform: uppercase;
-            font-weight: bold;
         }
 
         .social-link:hover {
-            background: #00ff00;
-            color: #000;
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
             transform: scale(1.1);
-        }
-
-        /* Code blocks */
-        pre {
-            background: #000;
-            border: 1px solid #00ff00;
-            padding: 20px;
-            overflow-x: auto;
-            margin: 20px 0;
-            position: relative;
-        }
-
-        pre::before {
-            content: "$ ";
-            color: #00ff00;
-            position: absolute;
-            top: 20px;
-            left: 20px;
-        }
-
-        code {
-            color: #00ff00;
-            font-family: 'Fira Code', monospace;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .ascii-header {
-                font-size: 5px;
+            .hero h1 {
+                font-size: 2.5em;
             }
             
-            h1 {
-                font-size: 1.8em;
+            .nav-links {
+                display: none;
             }
             
-            h2 {
-                font-size: 1.4em;
+            .search-bar {
+                flex-direction: column;
             }
             
-            .tools-grid {
+            .writeups-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Glitch effect */
-        .glitch {
-            position: relative;
-            text-shadow: 
-                0.05em 0 0 rgba(255, 0, 0, 0.75),
-                -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
-                0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
-            animation: glitch 1s infinite;
+        /* Loading Animation */
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
         }
 
-        @keyframes glitch {
-            0% {
-                text-shadow: 
-                    0.05em 0 0 rgba(255, 0, 0, 0.75),
-                    -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
-                    0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
-            }
-            15% {
-                text-shadow: 
-                    0.05em 0 0 rgba(255, 0, 0, 0.75),
-                    -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
-                    0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
-            }
-            16% {
-                text-shadow: 
-                    -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
-                    0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
-                    -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
-            }
-            49% {
-                text-shadow: 
-                    -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
-                    0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
-                    -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
-            }
-            50% {
-                text-shadow: 
-                    0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
-                    0.05em 0 0 rgba(0, 255, 0, 0.75),
-                    0 -0.05em 0 rgba(0, 0, 255, 0.75);
-            }
-            99% {
-                text-shadow: 
-                    0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
-                    0.05em 0 0 rgba(0, 255, 0, 0.75),
-                    0 -0.05em 0 rgba(0, 0, 255, 0.75);
-            }
-            100% {
-                text-shadow: 
-                    -0.025em 0 0 rgba(255, 0, 0, 0.75),
-                    -0.025em -0.025em 0 rgba(0, 255, 0, 0.75),
-                    -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
-            }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <pre class="ascii-header">
-███████╗ ██████╗ ██████╗ ███████╗███████╗████████╗    ██╗  ██╗ ██████╗ ██╗     ██████╗ 
-██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔════╝╚══██╔══╝    ██║  ██║██╔═══██╗██║     ██╔══██╗
-█████╗  ██║   ██║██████╔╝█████╗  ███████╗   ██║       ███████║██║   ██║██║     ██║  ██║
-██╔══╝  ██║   ██║██╔══██╗██╔══╝  ╚════██║   ██║       ██╔══██║██║   ██║██║     ██║  ██║
-██║     ╚██████╔╝██║  ██║███████╗███████║   ██║       ██║  ██║╚██████╔╝███████╗██████╔╝
-╚═╝      ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝   ╚═╝       ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═════╝ 
-                    ███████╗███████╗ ██████╗██████╗ ███████╗████████╗███████╗
-                    ██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝╚══██╔══╝██╔════╝
-                    ███████╗█████╗  ██║     ██████╔╝█████╗     ██║   ███████╗
-                    ╚════██║██╔══╝  ██║     ██╔══██╗██╔══╝     ██║   ╚════██║
-                    ███████║███████╗╚██████╗██║  ██║███████╗   ██║   ███████║
-                    ╚══════╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝
-        </pre>
-
-        <h1 class="typing">PENETRATION TESTER | SECURITY RESEARCHER | EXPLOIT DEVELOPER</h1>
-
-        <div class="badges">
-            <img src="https://img.shields.io/badge/Platform-HackTheBox-9FEF00?style=for-the-badge&logo=hack-the-box" alt="HackTheBox">
-            <img src="https://img.shields.io/badge/Focus-Web%20Security-FF6B6B?style=for-the-badge" alt="Web Security">
-            <img src="https://img.shields.io/badge/Cert-OSCP%20(In%20Progress)-FFA500?style=for-the-badge" alt="OSCP">
-            <img src="https://img.shields.io/badge/Tools-10+-00D9FF?style=for-the-badge" alt="Tools">
-            <img src="https://img.shields.io/badge/CVEs-Loading...-FF0000?style=for-the-badge" alt="CVEs">
-        </div>
-
-        <section class="section">
-            <h2>whoami</h2>
-            <p>Security researcher with a passion for breaking things (legally) and building tools that help others do the same. 
-            Currently grinding through HackTheBox Pro Labs and OffSec Proving Grounds while developing automation frameworks for the pentesting community.</p>
-            
-            <p>Specializing in:</p>
-            <ul style="margin-left: 40px; color: #00cc00;">
-                <li>Web Application Security (SQLi, XSS, SSRF, XXE)</li>
-                <li>Active Directory Exploitation</li>
-                <li>Linux Privilege Escalation</li>
-                <li>Custom Exploit Development</li>
-                <li>Security Tool Development (Python, Go, Bash)</li>
+    <nav>
+        <div class="nav-content">
+            <a href="/" class="logo">PG Chronicles</a>
+            <ul class="nav-links">
+                <li><a href="#writeups">Writeups</a></li>
+                <li><a href="#tools">Tools</a></li>
+                <li><a href="#stats">Statistics</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
             </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="hero">
+            <h1>Proving Grounds Chronicles</h1>
+            <p>Comprehensive walkthroughs and security research for OffSec Proving Grounds boxes. 
+            Learn, practice, and master penetration testing techniques through detailed writeups.</p>
         </section>
 
-        <section class="section">
-            <h2>current_stats</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Platform</th>
-                        <th>Achievement</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>HackTheBox</td>
-                        <td>50+ Boxes Owned</td>
-                        <td style="color: #9FEF00;">Pro Hacker</td>
-                    </tr>
-                    <tr>
-                        <td>OffSec PG</td>
-                        <td>30+ Machines</td>
-                        <td style="color: #FFA500;">Practice Mode</td>
-                    </tr>
-                    <tr>
-                        <td>TryHackMe</td>
-                        <td>100+ Rooms</td>
-                        <td style="color: #00D9FF;">0xC Rank</td>
-                    </tr>
-                    <tr>
-                        <td>CVEs</td>
-                        <td>0 (working on it!)</td>
-                        <td style="color: #FF6B6B;">Research Phase</td>
-                    </tr>
-                    <tr>
-                        <td>Tools Released</td>
-                        <td>10+</td>
-                        <td style="color: #9FEF00;">Active Development</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-        <section class="section">
-            <h2>skill_matrix</h2>
-            <div class="skill-container">
-                <div class="skill">
-                    <div class="skill-name">
-                        <span>Web Application Security</span>
-                        <span>95%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 95%;"></div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">
-                        <span>Network Penetration Testing</span>
-                        <span>85%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 85%;"></div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">
-                        <span>Active Directory</span>
-                        <span>75%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 75%;"></div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">
-                        <span>Exploit Development</span>
-                        <span>65%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 65%;"></div>
-                    </div>
-                </div>
-                <div class="skill">
-                    <div class="skill-name">
-                        <span>Cloud Security</span>
-                        <span>50%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 50%;"></div>
-                    </div>
-                </div>
+        <section class="stats" id="stats">
+            <div class="stat-card">
+                <div class="stat-number">87</div>
+                <div class="stat-label">Boxes Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Writeups Published</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">15</div>
+                <div class="stat-label">Tools Released</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">500+</div>
+                <div class="stat-label">Hours Researched</div>
             </div>
         </section>
 
-        <section class="section">
-            <h2>latest_writeups</h2>
-            <div class="writeup-card">
-                <h3><a href="writeups/htb-keeper.html">HackTheBox: Keeper</a></h3>
-                <p class="writeup-date">January 15, 2024</p>
-                <p>Easy Linux box focusing on KeePass exploitation and CVE-2023-32784. Learned about memory dump analysis and credential extraction techniques.</p>
+        <section class="search-filter">
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Search writeups... (e.g., 'SQL injection', 'privilege escalation')" id="searchInput">
+                <button class="search-btn" onclick="searchWriteups()">Search</button>
             </div>
-            <div class="writeup-card">
-                <h3><a href="writeups/htb-authority.html">HackTheBox: Authority</a></h3>
-                <p class="writeup-date">January 10, 2024</p>
-                <p>Medium Windows box with Active Directory. Exploited Ansible vault misconfigurations and performed certificate-based authentication attacks.</p>
+            <div class="filter-tags">
+                <span class="filter-tag active" data-filter="all">All</span>
+                <span class="filter-tag" data-filter="easy">Easy</span>
+                <span class="filter-tag" data-filter="medium">Medium</span>
+                <span class="filter-tag" data-filter="hard">Hard</span>
+                <span class="filter-tag" data-filter="web">Web Exploitation</span>
+                <span class="filter-tag" data-filter="linux">Linux</span>
+                <span class="filter-tag" data-filter="windows">Windows</span>
+                <span class="filter-tag" data-filter="ad">Active Directory</span>
             </div>
-            <div class="writeup-card">
-                <h3><a href="writeups/pg-heist.html">OffSec PG: Heist</a></h3>
-                <p class="writeup-date">January 5, 2024</p>
-                <p>Challenging box involving web application vulnerabilities, custom exploit development, and advanced privilege escalation techniques.</p>
-            </div>
-            <p style="text-align: center; margin-top: 30px;">
-                <a href="writeups.html" style="font-size: 1.2em;">→ View All Writeups</a>
-            </p>
         </section>
 
-        <section class="section">
-            <h2>security_tools</h2>
+        <section id="writeups">
+            <h2 style="font-size: 2.5em; margin-bottom: 30px; text-align: center;">Latest Writeups</h2>
+            <div class="writeups-grid" id="writeupGrid">
+                <!-- Writeup cards will be dynamically generated -->
+                <div class="writeup-card">
+                    <div class="writeup-header">
+                        <span class="difficulty medium">Medium</span>
+                        <h3 class="writeup-title">Wheels</h3>
+                        <div class="writeup-meta">
+                            <span>📅 Jan 15, 2025</span>
+                            <span>⏱️ 45 min</span>
+                        </div>
+                    </div>
+                    <div class="writeup-content">
+                        <p>Exploiting a Jenkins instance with weak credentials, followed by Docker container escape to achieve root access.</p>
+                        <div class="writeup-tags">
+                            <span class="tag">Jenkins</span>
+                            <span class="tag">Docker</span>
+                            <span class="tag">Linux</span>
+                            <span class="tag">Container Escape</span>
+                        </div>
+                        <a href="/writeups/wheels.html" class="read-more">Read Full Writeup →</a>
+                    </div>
+                </div>
+
+                <div class="writeup-card">
+                    <div class="writeup-header">
+                        <span class="difficulty hard">Hard</span>
+                        <h3 class="writeup-title">Heist</h3>
+                        <div class="writeup-meta">
+                            <span>📅 Jan 12, 2025</span>
+                            <span>⏱️ 2 hours</span>
+                        </div>
+                    </div>
+                    <div class="writeup-content">
+                        <p>Complex Active Directory attack chain involving Kerberoasting, ASREPRoasting, and DCSync to compromise the domain.</p>
+                        <div class="writeup-tags">
+                            <span class="tag">Active Directory</span>
+                            <span class="tag">Kerberos</span>
+                            <span class="tag">Windows</span>
+                            <span class="tag">DCSync</span>
+                        </div>
+                        <a href="/writeups/heist.html" class="read-more">Read Full Writeup →</a>
+                    </div>
+                </div>
+
+                <div class="writeup-card">
+                    <div class="writeup-header">
+                        <span class="difficulty easy">Easy</span>
+                        <h3 class="writeup-title">Nibbles</h3>
+                        <div class="writeup-meta">
+                            <span>📅 Jan 10, 2025</span>
+                            <span>⏱️ 30 min</span>
+                        </div>
+                    </div>
+                    <div class="writeup-content">
+                        <p>Simple box focusing on Nibbleblog CMS exploitation and sudo misconfiguration for privilege escalation.</p>
+                        <div class="writeup-tags">
+                            <span class="tag">Web</span>
+                            <span class="tag">CMS</span>
+                            <span class="tag">Linux</span>
+                            <span class="tag">Sudo</span>
+                        </div>
+                        <a href="/writeups/nibbles.html" class="read-more">Read Full Writeup →</a>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="search-btn" onclick="loadMoreWriteups()">Load More Writeups</button>
+            </div>
+        </section>
+
+        <section class="tools-section" id="tools">
+            <h2 style="font-size: 2.5em; margin-bottom: 20px;">Security Tools</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 30px;">Custom tools developed during Proving Grounds research</p>
             <div class="tools-grid">
                 <div class="tool-card">
-                    <h3 class="glitch">🔥 AutoPwn Framework</h3>
-                    <p>Modular exploitation framework for automating common attack chains. Features intelligent vulnerability chaining and session management.</p>
-                    <p><a href="https://github.com/forest-hold-secrets/autopwn">View on GitHub →</a></p>
+                    <div class="tool-icon">🔍</div>
+                    <h3 class="tool-name">PG-Recon</h3>
+                    <p>Automated reconnaissance tool specifically designed for Proving Grounds boxes with custom wordlists.</p>
+                    <a href="https://github.com/yourusername/pg-recon" style="color: var(--primary);">View on GitHub →</a>
                 </div>
                 <div class="tool-card">
-                    <h3 class="glitch">🌐 WebRecon Plus</h3>
-                    <p>Enhanced web reconnaissance tool with subdomain enumeration, technology detection, and custom wordlist generation.</p>
-                    <p><a href="https://github.com/forest-hold-secrets/webrecon-plus">View on GitHub →</a></p>
+                    <div class="tool-icon">🚀</div>
+                    <h3 class="tool-name">AutoPwn-PG</h3>
+                    <p>Exploitation framework with modules for common PG vulnerabilities and automated privilege escalation.</p>
+                    <a href="https://github.com/yourusername/autopwn-pg" style="color: var(--primary);">View on GitHub →</a>
                 </div>
                 <div class="tool-card">
-                    <h3 class="glitch">📡 RevShell Manager</h3>
-                    <p>Advanced reverse shell handler supporting multiple protocols, automatic persistence, and encrypted communications.</p>
-                    <p><a href="https://github.com/forest-hold-secrets/revshell-manager">View on GitHub →</a></p>
-                </div>
-                <div class="tool-card">
-                    <h3 class="glitch">🔐 ADPwn Toolkit</h3>
-                    <p>Comprehensive Active Directory exploitation toolkit with automated attack paths and BloodHound integration.</p>
-                    <p><a href="https://github.com/forest-hold-secrets/adpwn">View on GitHub →</a></p>
+                    <div class="tool-icon">📊</div>
+                    <h3 class="tool-name">PG-Stats</h3>
+                    <p>Track your Proving Grounds progress, analyze patterns, and generate beautiful statistics reports.</p>
+                    <a href="https://github.com/yourusername/pg-stats" style="color: var(--primary);">View on GitHub →</a>
                 </div>
             </div>
-            <p style="text-align: center; margin-top: 30px;">
-                <a href="tools.html" style="font-size: 1.2em;">→ Explore All Tools</a>
-            </p>
         </section>
-
-        <section class="section">
-            <h2>current_research</h2>
-            <div style="margin: 20px 0;">
-                <h3>🔍 Bypassing Modern WAFs</h3>
-                <p>Researching novel encoding techniques and HTTP smuggling methods to bypass next-gen Web Application Firewalls.</p>
-                
-                <h3 style="margin-top: 20px;">🛡️ Container Escape Techniques</h3>
-                <p>Exploring kernel vulnerabilities and misconfigurations that lead to Docker/Kubernetes container escapes.</p>
-                
-                <h3 style="margin-top: 20px;">⚡ Zero-Day Research</h3>
-                <p>Currently fuzzing popular web frameworks for memory corruption vulnerabilities. CVE submissions pending...</p>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2>contact_me</h2>
-            <div class="social-links">
-                <a href="https://github.com/forest-hold-secrets" class="social-link">GitHub</a>
-                <a href="https://linkedin.com/in/your-profile" class="social-link">LinkedIn</a>
-                <a href="https://twitter.com/your-handle" class="social-link">Twitter</a>
-                <a href="mailto:your-email@example.com" class="social-link">Email</a>
-                <a href="writeups.xml" class="social-link">RSS Feed</a>
-            </div>
-        </section>
-
-        <div style="text-align: center; margin: 60px 0; color: #00cc00;">
-            <p>© 2024 Forest-Hold-Secrets | <span class="glitch">Stay Curious, Stay Dangerous</span></p>
-            <pre style="display: inline-block; margin-top: 20px; font-size: 10px;">
-   _  _   ___  _  _   
-  | || | / _ \| || |  
-  | || || | | | || |  
-  |__   | |_| |__   | 
-     |_| \___/   |_|  
-  Page Not Found ;)
-            </pre>
-        </div>
     </div>
 
-    <script>
-        // Add some interactive effects
-        document.addEventListener('DOMContentLoaded', function() {
-            // Typing effect for headers
-            const headers = document.querySelectorAll('h2');
-            headers.forEach(header => {
-                header.style.opacity = '0';
-                setTimeout(() => {
-                    header.style.opacity = '1';
-                    header.classList.add('typing');
-                }, 100);
-            });
+    <footer>
+        <div class="footer-content">
+            <h3 style="font-size: 1.5em; margin-bottom: 20px;">Connect & Follow</h3>
+            <div class="social-links">
+                <a href="https://github.com/yourusername" class="social-link">GitHub</a>
+                <a href="https://twitter.com/yourusername" class="social-link">Twitter</a>
+                <a href="https://linkedin.com/in/yourusername" class="social-link">LinkedIn</a>
+                <a href="/rss.xml" class="social-link">RSS Feed</a>
+            </div>
+            <p style="color: var(--text-secondary); margin-top: 30px;">
+                © 2025 Proving Grounds Chronicles | Built with passion for the InfoSec community
+            </p>
+        </div>
+    </footer>
 
-            // Random glitch effect
-            setInterval(() => {
-                const glitchElements = document.querySelectorAll('.glitch');
-                glitchElements.forEach(el => {
-                    if (Math.random() > 0.9) {
-                        el.style.animation = 'glitch 0.3s';
-                        setTimeout(() => {
-                            el.style.animation = '';
-                        }, 300);
-                    }
-                });
-            }, 3000);
+    <script>
+        // Sample writeup data (in production, this would come from a backend/API)
+        const writeups = [
+            {
+                title: "Wheels",
+                difficulty: "medium",
+                date: "Jan 15, 2025",
+                time: "45 min",
+                description: "Exploiting a Jenkins instance with weak credentials, followed by Docker container escape to achieve root access.",
+                tags: ["Jenkins", "Docker", "Linux", "Container Escape"],
+                categories: ["web", "linux"]
+            },
+            {
+                title: "Heist",
+                difficulty: "hard",
+                date: "Jan 12, 2025",
+                time: "2 hours",
+                description: "Complex Active Directory attack chain involving Kerberoasting, ASREPRoasting, and DCSync to compromise the domain.",
+                tags: ["Active Directory", "Kerberos", "Windows", "DCSync"],
+                categories: ["windows", "ad"]
+            },
+            {
+                title: "Nibbles",
+                difficulty: "easy",
+                date: "Jan 10, 2025",
+                time: "30 min",
+                description: "Simple box focusing on Nibbleblog CMS exploitation and sudo misconfiguration for privilege escalation.",
+                tags: ["Web", "CMS", "Linux", "Sudo"],
+                categories: ["web", "linux"]
+            },
+            // Add more writeups here...
+        ];
+
+        // Filter functionality
+        document.querySelectorAll('.filter-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                filterWriteups(filter);
+            });
         });
+
+        function filterWriteups(filter) {
+            const cards = document.querySelectorAll('.writeup-card');
+            cards.forEach(card => {
+                if (filter === 'all') {
+                    card.style.display = 'flex';
+                } else {
+                    // In production, you'd check against actual categories
+                    card.style.display = 'flex'; // Simplified for demo
+                }
+            });
+        }
+
+        // Search functionality
+        function searchWriteups() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.writeup-card');
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Load more writeups
+        function loadMoreWriteups() {
+            // In production, this would fetch more writeups from an API
+            const grid = document.getElementById('writeupGrid');
+            
+            // Show loading animation
+            const loader = document.createElement('div');
+            loader.className = 'loader';
+            loader.style.margin = '20px auto';
+            grid.parentElement.appendChild(loader);
+            
+            setTimeout(() => {
+                loader.remove();
+                alert('More writeups would be loaded here in production!');
+            }, 1000);
+        }
+
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Animate stats on scroll
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease-out';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Add fadeInUp animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
